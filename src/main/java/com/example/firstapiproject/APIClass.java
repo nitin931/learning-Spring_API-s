@@ -1,9 +1,6 @@
 package com.example.firstapiproject;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,11 +23,31 @@ public class APIClass {
         return "User has been added successfully";
     }
 
-    @GetMapping("/getUserById")
-    public UserInfo getUserInfoByUserId(@RequestParam("userId")Integer userId){
+    @GetMapping("/getViaReqBody")
+    public String addUser(@RequestBody UserInfo obj){
+        int key = obj.getUserId();
+        userInfoDb.put(key,obj);
+        return "USer has been added";
+    }
+
+    @GetMapping("/getUserById/{userId}")
+    public UserInfo getUserInfoByUserId(@PathVariable("userId")Integer userId){
         UserInfo response = userInfoDb.get(userId);
         return response;
     }
+
+    @GetMapping("/getUSerByAge/{greaterAge}/{lessThanAge}")
+    public List<UserInfo> userByAge(@PathVariable("greaterAge") Integer greaterAge,@PathVariable("lessThanAge") Integer lessThanAge){
+        List<UserInfo> ansList = new ArrayList<>();
+        for(UserInfo userInfo : userInfoDb.values()){
+            if(userInfo.getAge()>greaterAge && userInfo.getAge()<lessThanAge){
+                ansList.add(userInfo);
+            }
+        }
+        return ansList;
+    }
+
+
 
     @GetMapping("/getAllUsers")
     public List<UserInfo> findAllUsers(){
